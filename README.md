@@ -211,3 +211,4 @@ When **Ollama** is enabled, the reasoning engine generates richer, context-aware
 This project was developed as an academic minor project.
 
 ---
+
