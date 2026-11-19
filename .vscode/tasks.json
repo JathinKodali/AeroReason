@@ -1,0 +1,28 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "AeroReason: Backend",
+      "type": "process",
+      "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "args": ["-m", "uvicorn", "api_server:app", "--host", "127.0.0.1", "--port", "8000"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"TF_ENABLE_ONEDNN_OPTS": "0"}},
+      "problemMatcher": [],
+      "presentation": {"panel": "dedicated"}
+    },
+    {
+      "label": "AeroReason: Frontend",
+      "type": "shell",
+      "command": "npm.cmd run dev -- --host 127.0.0.1 --port 5173 --strictPort",
+      "options": {"cwd": "${workspaceFolder}/frontend"},
+      "problemMatcher": [],
+      "presentation": {"panel": "dedicated"}
+    },
+    {
+      "label": "AeroReason: Run All",
+      "dependsOn": ["AeroReason: Backend", "AeroReason: Frontend"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    }
+  ]
+}

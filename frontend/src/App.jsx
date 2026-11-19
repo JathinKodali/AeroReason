@@ -10,7 +10,7 @@ import PredictData from './pages/PredictData'
 
 export const AppContext = createContext()
 
-const API_BASE = 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? 'http://localhost:8000' : '')
 
 function App() {
   const [dataset, setDataset] = useState('FD001')

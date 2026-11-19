@@ -29,3 +29,11 @@ __pycache__/
 *.pyc
 *.zip
 
+
+# Local Windows runtime
+.venv/
+.runtime/
+
+# Deployment build artifacts
+static/
+.venv-*/

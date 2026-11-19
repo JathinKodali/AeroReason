@@ -212,3 +212,55 @@ This project was developed as an academic minor project.
 
 ---
 
+
+## Windows / VS Code local setup
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-local.txt
+cd frontend
+npm.cmd ci
+cd ..
+code .
+```
+
+In VS Code select **Terminal > Run Task > AeroReason: Run All** to start both services.
+Open http://localhost:5173 for the dashboard and http://localhost:8000/docs for the API.
+Stop both running tasks with **Terminal > Terminate Task** before restarting them.
+The Python interpreter is configured to use the project-local `.venv` environment.
+Ollama is optional; the app falls back to rule-based insights when it is unavailable.
+
+## Render deployment
+
+The root `render.yaml` creates one Docker web service serving the React build
+and FastAPI API from the same origin. Production browser requests use relative
+API URLs; local Vite development still uses http://localhost:8000.
+
+Push this project to a Git repository you control, then create a Render Blueprint
+from that repository. Use the root Dockerfile. The service listens on Render's
+`PORT` (10000 in the Blueprint), with `/api/model/status` as its health check.
+The image installs `requirements-deploy.txt` and runs the bundled trained models;
+it does not train during deployment. No environment secrets are required.
+
+The Blueprint retains the existing free plan. TensorFlow and cached datasets may
+exceed its memory limit; verify prediction requests after deployment. Upgrade
+only after reviewing and approving the hosting cost. Ollama is not included in
+this container, so explanations use the existing rule-based fallback.
+
+Deployment verification: visit `/`, `/fleet`, `/docs`, `/api/model/status`, and
+`/api/predictions?dataset=FD001&window=30`. A working landing page alone does not
+verify model inference. Docker is not installed on the local setup, so the full
+Linux image build must be verified by Render's build logs.
+
+To repeat the local combined-service smoke tests after a frontend change:
+
+```powershell
+npm.cmd --prefix frontend run build
+New-Item -ItemType Directory -Path static -Force | Out-Null
+Copy-Item frontend\dist\* static -Recurse -Force
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
+
+These checks verify the built dashboard, static assets, client-side routes,
+API documentation, model health, missing API routes, and FD001 inference.
+They do not replace a successful Docker build and live Render inference check.
